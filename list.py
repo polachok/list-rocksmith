@@ -120,6 +120,80 @@ class Track(typing.NamedTuple):
     artist: str
     album: str
     title: str
+    arrangement: str
+    tuning: str
+
+class Tuning(typing.NamedTuple):
+    string0: int
+    string1: int
+    string2: int
+    string3: int
+    string4: int
+    string5: int
+
+    @classmethod
+    def standard(cls):
+        return cls(0, 0, 0, 0, 0, 0)
+
+    @classmethod
+    def drop_d(cls):
+        return cls(-2, 0, 0, 0, 0, 0)
+
+    @classmethod
+    def drop_c_sharp(cls):
+        return cls(-3, -1, -1, -1, -1, -1)
+
+    @classmethod
+    def drop_c(cls):
+        return cls(-4, -2, -2, -2, -2, -2)
+
+    @classmethod
+    def eb(cls):
+        return cls(-1, -1, -1, -1, -1, -1)
+
+    @classmethod
+    def d(cls):
+        return cls(-2, -2, -2, -2, -2, -2)
+
+    @classmethod
+    def c_sharp(cls):
+        return cls(-3, -3, -3, -3, -3, -3)
+
+    @classmethod
+    def c(cls):
+        return cls(-4, -4, -4, -4, -4, -4)
+
+    @classmethod
+    def b(cls):
+        return cls(-5, -5, -5, -5, -5, -5)
+
+    @classmethod
+    def f(cls):
+        return cls(1, 1, 1, 1, 1, 1)
+
+    def __str__(self):
+        if self == Tuning.standard():
+            return "Standard"
+        elif self == Tuning.drop_d():
+            return "Drop D"
+        elif self == Tuning.drop_c_sharp():
+            return "Drop C#"
+        elif self == Tuning.drop_c():
+            return "Drop C"
+        elif self == Tuning.eb():
+            return "Lowered Eb"
+        elif self == Tuning.d():
+            return "Lowered D"
+        elif self == Tuning.c_sharp():
+            return "Lowered C#"
+        elif self == Tuning.c():
+            return "Lowered C"
+        elif self == Tuning.b():
+            return "Lowered B"
+        elif self == Tuning.f():
+            return "Raised F"
+        else:
+            return "Custom: {} {} {} {} {} {}".format(self.string0, self.string1, self.string2, self.string3, self.string4, self.string5)
 
 def read_psarc(filename):
     tracks = set()
@@ -132,7 +206,9 @@ def read_psarc(filename):
                 for key, value in data['Entries'].items():
                     attributes = value['Attributes']
                     if 'ArtistName' in attributes and 'AlbumName' in attributes and 'SongName' in attributes:
-                        track = Track(attributes['ArtistName'], attributes['AlbumName'], attributes['SongName'])
+                        arrangement = attributes['ArrangementName']
+                        tuning = Tuning(**attributes['Tuning'])
+                        track = Track(attributes['ArtistName'], attributes['AlbumName'], attributes['SongName'], arrangement, str(tuning))
                         tracks.add(track)
     return tracks
 
@@ -142,12 +218,12 @@ if __name__ == '__main__':
         sys.exit(1)
     filename = os.path.basename(sys.argv[1])
     f = open(filename + '.txt', 'w', newline = '')
-    writer = csv.DictWriter(f, fieldnames = ['artist', 'album', 'title'])
+    writer = csv.DictWriter(f, fieldnames = ['artist', 'album', 'title', 'arrangement', 'tuning'])
     writer.writeheader()
     for root, dirs, files in os.walk(sys.argv[1]):
         for filename in files:
             if filename.endswith('.psarc'):
                 tracks = read_psarc(os.path.join(root, filename))
                 for track in tracks:
-                    print(track)
+                    #print(track)
                     writer.writerow(track._asdict())

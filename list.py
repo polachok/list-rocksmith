@@ -217,7 +217,7 @@ if __name__ == '__main__':
         print('Usage: psarc.py <directory>')
         sys.exit(1)
     filename = os.path.basename(sys.argv[1])
-    f = open(filename + '.txt', 'w', newline = '')
+    f = open(filename + '.txt', 'w', newline = '', encoding='utf-8')
     writer = csv.DictWriter(f, fieldnames = ['artist', 'album', 'title', 'arrangement', 'tuning'])
     writer.writeheader()
     for root, dirs, files in os.walk(sys.argv[1]):

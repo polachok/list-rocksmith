@@ -200,7 +200,7 @@ def read_psarc(filename):
     with open(filename, 'rb') as psarc:
         entries = []
         try:
-            entries = read_toc(psarc):
+            entries = read_toc(psarc)
         except e:
             print("Error reading {}: {}".format(filename, e))
         for entry in entries:

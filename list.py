@@ -198,7 +198,11 @@ class Tuning(typing.NamedTuple):
 def read_psarc(filename):
     tracks = set()
     with open(filename, 'rb') as psarc:
-        entries = read_toc(psarc)
+        entries = []
+        try:
+            entries = read_toc(psarc):
+        except e:
+            print("Error reading {}: {}".format(filename, e))
         for entry in entries:
             data = read_entry(psarc, entry)
             if entry['filepath'].endswith('.hsan'):
